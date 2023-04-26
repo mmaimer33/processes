@@ -1,3 +1,6 @@
+/**
+ * Represents a {@code Process} that can be run by the {@code ProcessEngine}. Takes a given amount of time with an optional routine to run upon completion.
+ */
 public class Process {
 
     /** Process ID. **/
@@ -16,6 +19,13 @@ public class Process {
     private long elapsedTime;
     private long previousUpdateTime;
 
+    /**
+     * Construct a {@code Process} with given details.
+     * @param pid Process ID.
+     * @param ppid Parent Process ID.
+     * @param duration Duration of process.
+     * @param routine Routine to run upon completion.
+     */
     public Process(int pid, int ppid, double duration, Routine routine) {
         ensureValidDuration(duration);
         this.pid = pid;
@@ -24,6 +34,12 @@ public class Process {
         this.routine = routine;
     }
 
+    /**
+     * Construct a {@code Process} with given details.
+     * @param pid Process ID.
+     * @param ppid Parents Process ID.
+     * @param duration Duration of process.
+     */
     public Process(int pid, int ppid, double duration) {
         ensureValidDuration(duration);
         this.pid = pid;
@@ -31,6 +47,9 @@ public class Process {
         this.duration = duration;
     }
 
+    /**
+     * Mark the process ready for execution.
+     */
     public void start() {
         if (started) {
             return;
@@ -42,6 +61,9 @@ public class Process {
         startTime = System.currentTimeMillis();
     }
 
+    /**
+     * Update the process based on the duration and whether it is running. To be called regularly by the {@code ProcessEngine}.
+     */
     public void update() {
         // If process isn't running, do nothing
         if (!running) {
@@ -54,6 +76,9 @@ public class Process {
         }
     }
 
+    /**
+     * Mark the process as blocked.
+     */
     public void block() {
         // If process hasn't started, do nothing
         if (!started) {
@@ -63,10 +88,16 @@ public class Process {
         running = false;
     }
 
+    /**
+     * Resume a blocked process.
+     */
     public void resume() {
 
     }
 
+    /**
+     * Terminate the process.
+     */
     public void terminate() {
         // If already finished, do nothing
         if (finished) {
