@@ -23,13 +23,13 @@ public class Process {
      * Construct a {@code Process} with given details.
      * @param pid Process ID.
      * @param ppid Parent Process ID.
-     * @param duration Duration of process.
+     * @param duration Duration of process, in seconds.
      * @param routine Routine to run upon completion.
      */
     public Process(int pid, int ppid, double duration, Routine routine) {
         ensureValidDuration(duration);
         this.pid = pid;
-        this.ppid = pid;
+        this.ppid = ppid;
         this.duration = duration * 1000;
         this.routine = routine;
     }
@@ -38,7 +38,7 @@ public class Process {
      * Construct a {@code Process} with given details.
      * @param pid Process ID.
      * @param ppid Parents Process ID.
-     * @param duration Duration of process.
+     * @param duration Duration of process, in seconds.
      */
     public Process(int pid, int ppid, double duration) {
         ensureValidDuration(duration);
@@ -59,6 +59,8 @@ public class Process {
         running = true;
 
         startTime = System.currentTimeMillis();
+        previousUpdateTime = startTime;
+        elapsedTime = 0;
     }
 
     /**
@@ -70,8 +72,10 @@ public class Process {
             return;
         }
 
+        updateTime();
+
         // Check if process is complete
-        if (System.currentTimeMillis() - startTime >= duration) {
+        if (elapsedTime >= duration) {
             terminate();
         }
     }
@@ -85,6 +89,9 @@ public class Process {
             return;
         }
 
+        updateTime();
+
+        // Block process
         running = false;
     }
 
@@ -92,7 +99,16 @@ public class Process {
      * Resume a blocked process.
      */
     public void resume() {
+        // If process isn't blocked, do nothing
+        if (running) {
+            return;
+        }
 
+        // Update time to match current
+        previousUpdateTime = System.currentTimeMillis();
+
+        // Unblock process
+        running = true;
     }
 
     /**
@@ -121,6 +137,12 @@ public class Process {
         if (durationToCheck <= 0) {
             throw new IllegalArgumentException("Invalid process duration");
         }
+    }
+
+    private void updateTime() {
+        long currTime = System.currentTimeMillis();
+        elapsedTime += currTime - previousUpdateTime;
+        previousUpdateTime = currTime;
     }
 
 }

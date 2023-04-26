@@ -5,7 +5,7 @@ public class ProcessEngine {
     /**
      * Time interval between each update in milliseconds.
      */
-    public final double TIME_INTERVAL = 200;
+    public static final long TIME_INTERVAL = 200;
 
     private static ArrayList<Process> processes;
 
@@ -13,11 +13,10 @@ public class ProcessEngine {
     private static boolean finished = false;
 
     /**
-     * Initialise the {@code ProcessEngine} with a given list of {@code Process}es.
+     * Initialise the {@code ProcessEngine} with a given list of {@code Process}es and start execution.
      * @param processList Initial list of processes.
-     * @throws InterruptedException If execution is interrupted.
      */
-    public static void initialise(ArrayList<Process> processList) throws InterruptedException {
+    public static void start (ArrayList<Process> processList) {
         running = true;
         processes = processList;
         for (Process process : processList) {
@@ -28,12 +27,15 @@ public class ProcessEngine {
 
     /**
      * Starts running the {@code ProcessEngine}.
-     * @throws InterruptedException If execution is interrupted.
      */
-    public static void run() throws InterruptedException {
+    public static void run() {
         while (running) {
             update();
-            Thread.sleep(200);
+            try {
+                Thread.sleep(TIME_INTERVAL);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 

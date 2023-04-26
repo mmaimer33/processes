@@ -5,10 +5,6 @@ public class Main {
         ArrayList<Process> processes = new ArrayList<>();
         processes.add(new Process(1, 0, 3, () -> System.out.println("Done")));
 
-        try {
-            ProcessEngine.initialise(processes);
-        }  catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        ProcessEngine.start(processes);
     }
 }
