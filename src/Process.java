@@ -11,9 +11,9 @@ public class Process {
     private final double duration;
     private Routine routine;
 
-    private boolean running;
-    private boolean started;
-    private boolean finished;
+    private boolean isRunning;
+    private boolean hasStarted;
+    private boolean isFinished;
 
     private long startTime;
     private long elapsedTime;
@@ -44,19 +44,19 @@ public class Process {
         ensureValidDuration(duration);
         this.pid = pid;
         this.ppid = ppid;
-        this.duration = duration;
+        this.duration = duration * 1000;
     }
 
     /**
      * Mark the process ready for execution.
      */
     public void start() {
-        if (started) {
+        if (hasStarted) {
             return;
         }
 
-        started = true;
-        running = true;
+        hasStarted = true;
+        isRunning = true;
 
         startTime = System.currentTimeMillis();
         previousUpdateTime = startTime;
@@ -68,7 +68,7 @@ public class Process {
      */
     public void update() {
         // If process isn't running, do nothing
-        if (!running) {
+        if (!isRunning) {
             return;
         }
 
@@ -85,22 +85,22 @@ public class Process {
      */
     public void block() {
         // If process hasn't started, do nothing
-        if (!started) {
+        if (!hasStarted) {
             return;
         }
 
         updateTime();
 
         // Block process
-        running = false;
+        isRunning = false;
     }
 
     /**
      * Resume a blocked process.
      */
-    public void resume() {
+    public void unblock() {
         // If process isn't blocked, do nothing
-        if (running) {
+        if (isRunning) {
             return;
         }
 
@@ -108,7 +108,7 @@ public class Process {
         previousUpdateTime = System.currentTimeMillis();
 
         // Unblock process
-        running = true;
+        isRunning = true;
     }
 
     /**
@@ -116,7 +116,7 @@ public class Process {
      */
     public void terminate() {
         // If already finished, do nothing
-        if (finished) {
+        if (isFinished) {
             return;
         }
 
@@ -125,12 +125,12 @@ public class Process {
             routine.run();
         }
 
-        running = false;
-        finished = true;
+        isRunning = false;
+        isFinished = true;
     }
 
     public boolean getFinished() {
-        return finished;
+        return isFinished;
     }
 
     private void ensureValidDuration(double durationToCheck) throws IllegalArgumentException{
