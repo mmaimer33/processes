@@ -74,6 +74,11 @@ public class Process {
 
         updateTime();
 
+        // Run routine if one exists
+        if (routine != null) {
+            routine.run();
+        }
+
         // Check if process is complete
         if (elapsedTime >= duration) {
             terminate();
@@ -118,11 +123,6 @@ public class Process {
         // If already finished, do nothing
         if (isFinished) {
             return;
-        }
-
-        // Run the routine if one exists
-        if (routine != null) {
-            routine.run();
         }
 
         isRunning = false;
